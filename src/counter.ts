@@ -84,12 +84,17 @@ let selectedNode=null;
 let root,canvas, treeLayout, menu;
 function hview(body) {
   body.append('p').style('border-bottom', 'solid 1px pink');
+  body.append('button').text('Zoom In').on('click',()=>manageZoom(1.25));
+  body.append('button').text('Zoom Out').on('click',()=>manageZoom(0.8));
    canvas = body
     .append('svg')
+    .attr('class','tree')
     .attr('width', 800)
     .attr('height', 800)
     .append('g')
+    .attr('id', 'idg')
     .attr('transform', 'translate(50,50)');
+  
   /*canvas.append('path').attr('fill','none').attr('stroke','red')
   .attr('d', diagonal({x:10,y:10},{x:10, y:100}))*/
    treeLayout = d3.tree().size([350, 450]);
@@ -132,7 +137,7 @@ function updateTreeView( treeData){
   let tvData=x.descendants();
   let linkData=x.links();
 
-  const u=canvas.selectAll('.node');
+  //const u=canvas.selectAll('.node');
 
   const node = canvas
     .selectAll('.node')
@@ -140,20 +145,23 @@ function updateTreeView( treeData){
     
   
   const nodeEnter=node
+    .attr('transform', (d) => `translate(${d.y}, ${d.x})`)
     .enter()
     .append('g')
     .classed('node', true)
     .attr('transform', (d) => `translate(${d.y}, ${d.x})`);
   //update node
-   u.attr('transform', (d) => `translate(${d.y}, ${d.x})`);
+  //node.attr('transform', (d) => `translate(${d.y}, ${d.x})`);
   
   node.exit().remove();
 
   renderCircle(nodeEnter);
   rendText(nodeEnter, menu);
+
   const links=canvas
     .selectAll('path.link')
     .data(linkData);
+
   renderLinks(links);
   removeLinks(links);
   
@@ -165,7 +173,7 @@ function renderCircle(node){
   .style("stroke", d=>d.data.isImmediate?"white":"green")
   .style("stroke-width",3)
   .on('click',d=>{
-    if(!d.data.isExpand){
+    if(!(d.data.isExpand || d.data.isImmediate)){
     d.data.isExpand=true;
     d.data.children= [
       {
@@ -219,15 +227,45 @@ function rendText(node, menu){
   
 }
 function renderLinks(links){
-  const u=canvas.selectAll('path')
+  
   links.enter()
-  .append('path').merge(u)
+  .insert('path','g')
   .classed('link', true)
   .attr('fill', 'none')
-  .attr('stroke', 'gray')
+  .attr('stroke', 'gray').merge(links)
   .attr('d', (d) => diagonal({x:d.source.x, y:d.source.y+10},{x:d.target.x, y:d.target.y-10}));
 }
 
 function removeLinks(links){
   links.exit().remove();
+}
+let zoom=null;
+function initZoom(): void {
+  d3.select('svg.tree').call(zoom);
+}
+
+function defineZoom(): void {
+  zoom = d3.zoom()
+  .scaleExtent([0.125, 4])
+  .on('zoom', zoomFn).filter(() => {
+    if (d3.event && (d3.event.type === 'dblclick' || d3.event.type === 'wheel')) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function zoomFn() {
+  if (d3.event.transform !== null) {
+    canvas.attr('transform', d3.event.transform);
+  }
+}
+
+
+function manageZoom(zoomRatio: number): void {
+ 
+  defineZoom();
+  initZoom();
+  d3.select('svg')
+    .transition().call(zoom.scaleBy, zoomRatio);
 }
