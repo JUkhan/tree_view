@@ -1,4 +1,6 @@
 import * as d3 from 'd3';
+import {treeData, dynamicName} from './treeData';
+import { ccpdt_validation } from './ccpdt'
 export function treeView() {
   const body = d3.select('body');
   body.append('h3').text('Tree View');
@@ -62,34 +64,20 @@ const diagonal = (s: INodePoint, d: INodePoint): string =>
      C ${(s.y + d.y) / 2} ${s.x},
       ${(s.y + d.y) / 2} ${d.x},
       ${d.y} ${d.x}`;
-function dynamicName(){return Math.random().toString(32).slice(2);}
-const treeData = {
-  name: 'root',
-  id:dynamicName(),
-  isExpand:true,
-  children: [
-    {
-      id:dynamicName(),
-      name:'Ripon',
-      isExpand:false,
-    },
-    {
-      id:dynamicName(),
-      name: 'Omar',
-      isExpand:false,
-    },
-  ],
-};
+
 let selectedNode=null;
 let root,canvas, treeLayout, menu;
 function hview(body) {
   body.append('p').style('border-bottom', 'solid 1px pink');
   body.append('button').text('Zoom In').on('click',()=>manageZoom(1.25));
   body.append('button').text('Zoom Out').on('click',()=>manageZoom(0.8));
+  body.append('button').text('CCPDT Validation').on('click',()=>{
+    body.select('ul').html(ccpdt_validation(treeData as any).map(el=>`<li>${el}</li>`).join(''));
+  });
    canvas = body
     .append('svg')
     .attr('class','tree')
-    .attr('width', 800)
+    .attr('width', 1200)
     .attr('height', 800)
     .append('g')
     .attr('id', 'idg')
@@ -97,7 +85,7 @@ function hview(body) {
   
   /*canvas.append('path').attr('fill','none').attr('stroke','red')
   .attr('d', diagonal({x:10,y:10},{x:10, y:100}))*/
-   treeLayout = d3.tree().size([350, 450]);
+   treeLayout = d3.tree().size([700, 1000]);
   root = d3.hierarchy(treeData);
    menu = body.select('.box').style('display', 'none');
   body.on('click', () => menu.style('display', 'none'));
@@ -110,7 +98,15 @@ function hview(body) {
   menu.select('.imm').on('click',()=>{
     console.log(selectedNode);
     if(selectedNode.height<2)return;
-    const immChildren=selectedNode.data.children.filter(d=>d.children).map(d=>d.children).flat();
+    let immChildren=selectedNode.data.children.filter(d=>d.children).map(d=>d.children).flat();
+    let dic=new Map();
+    immChildren=immChildren.reduce((res, el)=>{
+      if(!dic.has(el.name)){
+        dic.set(el.name, true);
+        res.push(el);
+      }
+      return res;
+    },[])
     selectedNode.data._children=selectedNode.data.children;
 
     selectedNode.data.children=[{id:dynamicName(), isImmediate:true, count:selectedNode.data.children.length, name:'ddd', children:immChildren}];

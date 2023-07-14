@@ -64,3 +64,12 @@ h1 {
   background-color: #646cff;
   
  }
+ svg{
+  background-color: #213547;
+  display: block;
+  margin: 0 10% auto;
+ }
+ text{
+  fill:#ffffff;
+  font-size: 12px;
+ }

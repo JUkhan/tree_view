@@ -1,5 +1,5 @@
 import './style.css';
 
-import {treeView} from './counter';
+import {treeView} from './tree';
 
 treeView();
