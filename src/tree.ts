@@ -216,7 +216,7 @@ function rendText(node, menu){
     }
     menu
       .style('display', 'inline-block')
-      .style("top", d3.event.y+5 + 'px')
+      .style("top", d3.event.y+window.scrollY+10 + 'px')
           .style("left", d3.event.x-20 + 'px')
       
   });
