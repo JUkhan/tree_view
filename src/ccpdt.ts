@@ -118,13 +118,13 @@ function findUnexpectedNodes(log: string[]) {
               if (value.has(4)) {
                   const products = Array.from(value.get(4)!)
                   if (products.length > 1) {
-                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have common products throughout all customer`);//(${products.join('|')})
+                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have unique numbers of products throughout all customers`);//(${products.join('|')})
                   }
               }
               if (value.has(5)) {
                   const deductions = Array.from(value.get(5)!)
                   if (deductions.length > 1) {
-                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have common deductions throughout all product`);//(${deductions.join('|')})
+                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have unique numbers of deductions throughout all products`);//(${deductions.join('|')})
                   }
               }
           }
