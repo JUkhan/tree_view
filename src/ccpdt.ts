@@ -30,18 +30,19 @@ function traverse(children: Relation[], log: string[], level: number, prev?: Rel
 
   children.forEach(node => {
       calNodeByLevel(node, level);
+      let head = (level > 1 ? `Inside Entity group '${currentEG}', ` : LevelValue[level]);
       if (hasStartDate(node)) {
-           const head = (level > 1 ? `Inside Entity group '${currentEG}', ` : LevelValue[level]);
           if (getStartDate(node) >= getEndDate(node)) {
               log.push(`${head} '${node.name}' start date should be lower than it's end date.`)
           }
           if (prev) {
               if (hasStartDate(node) && (getEndDate(prev) >= getStartDate(node))) {
+                  if(level===2){head = LevelValue[level-1];}
                   log.push(`${head} '${prev.name}' end date should be lower than the start date of  ${LevelValue[level]} '${node.name}'`)
               }
           }
       } else {
-          log.push(`${LevelValue[level]} '${node.name}' has no start date`);
+          log.push(`${head} ${LevelValue[level]} '${node.name}' has no start date`);
       }
       traverse(node.children, log, level + 1, node)
   })

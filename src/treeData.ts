@@ -11,7 +11,7 @@ export const treeData = {
             isExpand: true,
             ExAtt:{
                 startDate:'2003-01-01',
-                //endDate:'2003-01-01',
+                endDate:'2003-01-05',
             },
             children: [
                 {
@@ -19,7 +19,7 @@ export const treeData = {
                     name: 'C1',
                     isExpand: true,
                     ExAtt:{
-                        startDate:'2003-01-05',
+                        //startDate:'2003-01-05',
                         endDate:'2003-03-31'
                     },
                     children: [
@@ -49,10 +49,10 @@ export const treeData = {
                             name: 'PG1',
                             isExpand: true,
                             ExAtt:{
-                                startDate:'2003-04-05',
+                                startDate:'2003-03-05',
                                 endDate:'2003-05-01'
                             },
-                            children:getProducts()
+                            children:(()=>getProducts().filter((_,i)=>i<2))()
                         }]
                 },
                 {
@@ -90,7 +90,7 @@ export const treeData = {
                     id: dynamicName(),
                     name: 'C2',
                     ExAtt:{
-                        startDate:'2003-04-01',
+                        startDate:'2003-03-01',
                         endDate:'2003-04-12'
                     },
                     isExpand: true,
@@ -160,7 +160,7 @@ function getProducts(){
             children:[
                 {
                     id: dynamicName(),
-                    name: 'Deduction1',
+                    name: 'Deduction12',
                     isExpand: true,
                     ExAtt:{
                         startDate:'2003-07-05'
