@@ -116,7 +116,7 @@ function getProducts(){
             name: 'P1',
             isExpand: true,
             ExAtt:{
-                startDate:'2003-06-05',
+                //startDate:'2003-06-05',
                 endDate:'2003-06-10'
             },
             children:[
@@ -170,3 +170,5 @@ function getProducts(){
         }
     ]
 }
+
+console.log(JSON.stringify(treeData))

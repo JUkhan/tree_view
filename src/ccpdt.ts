@@ -19,32 +19,36 @@ var temp = new Map<number, Set<string>>(), currentEG = '';
 var datesMap = new Map<string, Map<string, any>>();
 export function ccpdt_validation(tree: Relation): string[] {
   let log: string[] = [];
-  traverse(tree.children, log, 1);
+  traverse(tree.children, log, 1, []);
   findUnexpectedNodes(log);
   findTimeOverlap(log);
   if (!log.length) log.push('CCPDT Validation Passed Successfully.');
   return log;
 }
-function traverse(children: Relation[], log: string[], level: number, prev?: Relation) {
+function traverse(children: Relation[], log: string[], level: number, path:string[], prev?: Relation) {
   if (!children) return
-
+  if(level>5){
+      log.push("This is not a valid graph for CCPDT.")
+      return
+  }
   children.forEach(node => {
+      path.push(node.name)
       calNodeByLevel(node, level);
-      let head = (level > 1 ? `Inside Entity group '${currentEG}', ` : LevelValue[level]);
+     
       if (hasStartDate(node)) {
           if (getStartDate(node) >= getEndDate(node)) {
-              log.push(`${head} '${node.name}' start date should be lower than it's end date.`)
+              log.push(`'${node.name}' start date should be lower than it's end date. ${path.join(' -> ')}`)
           }
           if (prev) {
               if (hasStartDate(node) && (getEndDate(prev) >= getStartDate(node))) {
-                  if(level===2){head = LevelValue[level-1];}
-                  log.push(`${head} '${prev.name}' end date should be lower than the start date of  ${LevelValue[level]} '${node.name}'`)
+                  log.push(`'${prev.name}' end date should be lower than the start date of '${node.name}': ${path.join(' -> ')}`)
               }
           }
       } else {
-          log.push(`${head} ${LevelValue[level]} '${node.name}' has no start date`);
+          log.push(`${node.name} has no start date: ${path.join(' -> ')}`);
       }
-      traverse(node.children, log, level + 1, node)
+      traverse(node.children, log, level + 1, path, node);
+      path.pop();
   })
 }
 function calNodeByLevel(node: Relation, level: number) {
@@ -119,13 +123,13 @@ function findUnexpectedNodes(log: string[]) {
               if (value.has(4)) {
                   const products = Array.from(value.get(4)!)
                   if (products.length > 1) {
-                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have unique numbers of products throughout all customers`);//(${products.join('|')})
+                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have unique numbers of products throughout all customers: (${products.join(' | ')})`);
                   }
               }
               if (value.has(5)) {
                   const deductions = Array.from(value.get(5)!)
                   if (deductions.length > 1) {
-                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have unique numbers of deductions throughout all products`);//(${deductions.join('|')})
+                      log.push(`Inside Entity group '${key}', Product group '${pg[0]}' should have unique numbers of deductions throughout all products: (${deductions.join(' | ')})`);
                   }
               }
           }
