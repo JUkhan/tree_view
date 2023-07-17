@@ -7,13 +7,7 @@ type Relation = {
       endDate: string
   }
 }
-const LevelValue: any = {
-  1: 'Entity group',
-  2: 'Customer',
-  3: 'Product group',
-  4: 'Product',
-  5: 'Deduction'
-}
+
 var RF = new Map<string, Map<number, Set<string>>>()
 var temp = new Map<number, Set<string>>(), currentEG = '';
 var datesMap = new Map<string, Map<string, any>>();
