@@ -105,6 +105,9 @@ function rendText(node) {
                 d.data._children=[]
             }
             updateTreeView(treeData);
+            if(d.depth===0){
+                node.select('image').attr('href',d => d.data.isExpand ? 'down.png' : 'right.png')
+            }
         });
         //.attr('transform', 'translate(1, 0)');
 
