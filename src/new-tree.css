@@ -1,0 +1,22 @@
+
+.node text {
+    font: 12px sans-serif;
+    text-anchor: start;
+    
+}
+
+.node link {
+    fill: none;
+    stroke: sienna;
+    stroke-width: 2px;
+}
+
+.node rect {
+    fill: transparent;
+    stroke-width: 0.5;
+    stroke: rgb(167, 152, 152);
+    border-radius: 6px;
+}
+.node image {
+    cursor: pointer;
+}
